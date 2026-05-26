@@ -1,0 +1,61 @@
+
+================================================================================
+RESUMEN DEL MODELO GANADOR - PREDICCIÓN DE INTENCIÓN DE COMPRA
+================================================================================
+
+FECHA DE GENERACIÓN: 2026-05-25 15:31:20
+
+MODELO SELECCIONADO: XGBoost
+================================================================================
+
+1. MÉTRICAS EN TEST SET
+  - Accuracy : 0.8820
+  - Precision: 0.6022
+  - Recall   : 0.7251
+  - F1-Score : 0.6580
+  - ROC-AUC  : 0.9205
+
+2. MATRIZ DE CONFUSIÓN
+  TP (Verdaderos Positivos) : 277
+  TN (Verdaderos Negativos) : 1876
+  FP (Falsos Positivos)     : 183
+  FN (Falsos Negativos)     : 105
+
+3. ANÁLISIS DE NEGOCIO
+  - Compras detectadas correctamente: 277 de 382 (72.5%)
+  - Compras PERDIDAS (FN): 105 sesiones
+  - False Alarms (FP): 183 sesiones
+
+4. CONFIGURACIÓN DEL MODELO
+  - Preprocesamiento:
+    * StandardScaler en 10 variables numéricas
+    * OneHotEncoder (drop='first') en 7 variables categóricas
+  
+  - Validación Cruzada: StratifiedKFold(n_splits=5)
+  - Train/Test Split: 80/20 (estratificado por target)
+  - Manejo de Desbalance: Métricas robustas (no remuestreo)
+
+5. COMPARATIVA CON OTROS MODELOS
+             Modelo  Accuracy  Precision   Recall  F1-Score  ROC-AUC
+            XGBoost  0.882016   0.602174 0.725131  0.657957 0.920474
+Logistic Regression  0.887751   0.757143 0.416230  0.537162 0.899665
+      Decision Tree  0.856616   0.538835 0.581152  0.559194 0.744437
+
+6. CÓMO USAR EL MODELO
+  
+  import joblib
+  modelo = joblib.load('modelo_ganador.pkl')
+  
+  # X_nuevo debe tener las mismas columnas que el dataset de entrenamiento
+  predicciones = modelo.predict(X_nuevo)
+  probabilidades = modelo.predict_proba(X_nuevo)[:, 1]
+
+7. ARCHIVOS GENERADOS
+  - modelo_ganador.pkl : Modelo entrenado (pipeline completo)
+  - confusion_matrix_*.png : Matriz de confusión
+  - roc_curve_*.png : ROC curve del ganador
+  - roc_curves_comparacion.png : ROC curves de todos los modelos
+  - feature_importance_*.png : Importancia de features (si aplica)
+  - resumen_modelo_ganador.txt : Este archivo
+
+================================================================================
