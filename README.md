@@ -147,24 +147,24 @@ Siga estrictamente los siguientes pasos en su terminal local para inicializar el
 **Como ejecutar la demo:**
 La demo esta implementada con Streamlit en `apps/streamlit_app.py`.
 
-1. ## Clonar el repositorio y posicionarse en la raíz:
+## 1. Clonar el repositorio y posicionarse en la raíz:
 **git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)**
 **cd tu-repositorio**
 
-2. ## Inicializar y activar el entorno virtual reproducible (.venv):
+## 2. Inicializar y activar el entorno virtual reproducible (.venv):
 En sistemas Windows (PowerShell):
-**python -m venv .venv**
-**.\.venv\Scripts\Activate.ps1**
+  **python -m venv .venv**
+  **.\.venv\Scripts\Activate.ps1**
 
-3. ## Instalar dependencias:
+## 3. Instalar dependencias:
 
 Powershell:
-**python -m pip install -r requirements.txt**
+  **python -m pip install -r requirements.txt**
 
-4. ## Ejecutar la app:
+## 4. Ejecutar la app:
 
-Powershell
-**streamlit run apps/streamlit_app.py**
+Powershell:  
+  **streamlit run apps/streamlit_app.py**
 
 **Notas:**
 - La consola generará la dirección local **http://localhost:8501**, la cual abrirá automáticamente en su navegador web las tres capas funcionales del tablero: el simulador interactivo de conversión, el monitor offline de métricas de calidad y la propuesta de extensión del Bloque 3
