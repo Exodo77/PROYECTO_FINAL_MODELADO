@@ -136,11 +136,11 @@ En concordancia con los criterios de evaluación de la cátedra, se identifican 
 2. **Deriva de Datos Comerciales (Data Drift):** Cambios estructurales en el diseño de la interfaz del e-commerce o campañas masivas imprevistas de marketing pueden modificar los promedios de PageValues históricos, requiriendo un reentrenamiento del estimador XGBoost para recuperar la precisión adaptativa.
 
 ## 🔮 Roadmap Futuro (Sistemas Híbridos - Bloque 3)
-En línea con las últimas unidades pedagógicas de la cátedra sobre optimización de datos complejos, la aplicación integra y detalla la evolución de la solución hacia una arquitectura híbrida de GenAI:
+En línea con las últimas unidades de la cátedra sobre optimización de datos complejos, la aplicación integra y detalla la evolución de la solución hacia una arquitectura híbrida de GenAI:
 
 * **Síntesis Tabular Avanzada:** Justificación de la incorporación de SDV (Synthetic Data Vault) para poblar simulaciones comerciales sin exponer datos de comportamiento de usuarios reales ni incurrir en sobreajuste estadístico.
 
-* **Agente Conversacional con RAG / Tool Calling:** Integración del backend analítico con un LLM corporativo (mediante LangChain y APIs). Esto permitirá a la gerencia de marketing interrogar al sistema mediante lenguaje natural ("¿Qué usuarios en Noviembre corren riesgo de abandonar el carrito?") e instruir a la IA a disparar cupones de descuento automáticos mediante la ejecución de funciones específicas mapeadas directamente sobre nuestro clasificador XGBoost.
+* **Agente Conversacional con RAG / Tool Calling:** Integración del backend analítico con un LLM corporativo (mediante LangChain y APIs). Esto permitirá a la gerencia de marketing interrogar al sistema mediante lenguaje natural ("Qué usuarios en Noviembre corren riesgo de abandonar el carrito?") e instruir a la IA a disparar cupones de descuento automáticos mediante la ejecución de funciones específicas mapeadas directamente sobre nuestro clasificador XGBoost.
 
 ## 🚀 Guía de Instalación y Ejecución Detallada
 Siga estrictamente los siguientes pasos en su terminal local para inicializar el entorno virtual controlado e implementar el despliegue del sistema interactivo:
