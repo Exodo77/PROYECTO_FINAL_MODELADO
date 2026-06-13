@@ -80,7 +80,7 @@ El modelo logra clasificar de forma correcta 277 transacciones comerciales del c
 El repositorio está estructurado modularmente para garantizar la reproducibilidad y el orden de los artefactos predictivos, analíticos y de interfaz:
 
 ```text
-📦 proyecto-modelado-ia
+📦 proyecto-modelado-ia**
 ├── 📁 .venv                              # Entorno virtual local 
 ├── 📁 apps                               # Capa de visualización y lógica de inferencia
 │   ├── 📁 __pycache__
@@ -107,7 +107,9 @@ El repositorio está estructurado modularmente para garantizar la reproducibilid
 ├── ⚙️ .gitignore                          # Exclusiones de Git (archivos temporales y entornos)
 ├── 📄 README.md                          # Guía principal del repositorio (Este archivo)
 └── 📋 requirements.txt                   # Listado completo de dependencias del entorno 
+```
 
+ 
 ## 📊Resumen Ejecutivo del Pipeline
 **🔍 Fase 1: Hallazgos de Análisis Exploratorio (EDA)** 
 * **Desbalance Extremo:** Se identificó que solo el 15.4% de las sesiones históricas generan compras efectivas, lo que requirió el uso de métricas inmunes al desbalance para evaluar la calidad (ROC-AUC y Recall).
@@ -117,13 +119,11 @@ El repositorio está estructurado modularmente para garantizar la reproducibilid
 **🤖 Fase 2: Modelado y Resultados de Performance**
 Se evaluaron tres arquitecturas bajo un esquema riguroso de Validación Cruzada Estratificada (*StratifiedKFold* con **k=5**). El algoritmo XGBoost Classifier se seleccionó como el núcleo predictivo debido a su sobresaliente capacidad para maximizar el área bajo la curva controlando el desbalance de clases de forma nativa.
 
-### 📊 Matriz Comparativa de Performance de Modelos Candidatos
+## 📊 Matriz Comparativa de Performance de Modelos Candidatos
 
-| Algoritmo Evaluado | Exactitud (Accuracy) | Precisión (Precision) | Sensibilidad (Recall) | Puntuación F1 (F1-Score) | Área Bajo la Curva (ROC-AUC) |
-| :--- | ---: | ---: | ---: | ---: | ---: |
-| 🚀 **XGBoost Classifier** | **0.8820** | **0.6022** | **0.7251** | **0.6580** | **0.9205** |
-| Regresión Logística | 0.8878 | 0.7571 | 0.4162 | 0.5372 | 0.8997 |
-| Árbol de Decisión (Baseline)| 0.8566 | 0.5388 | 0.5812 | 0.5592 | 0.7444 |
+Para validar la robustez de la solución, se evaluaron múltiples algoritmos bajo un esquema estricto de validación cruzada estratificada. A continuación, se presenta la matriz completa con las métricas técnicas obtenidas en el conjunto de prueba independiente, donde se evidencia el rendimiento superior de nuestro modelo final:
+
+![Matriz Comparativa de Modelado y Resultados](models/modelado_y_resultados.jpg)
 
 ## 💡 Impacto de Negocio: 
 Aunque la Regresión Logística arroja un Accuracy sutilmente mayor, su Recall es sumamente deficiente (41.62%). Elegir XGBoost nos permite capturar de manera temprana al 72.51% de los clientes con intenciones de compra legítimas para aplicar automatizaciones de marketing.
