@@ -1,3 +1,8 @@
+import os
+# Forzar al SDK de Gemini a usar la API v1 estable antes de importar cualquier módulo de google
+os.environ["API_VERSION"] = "v1"
+os.environ["GOOGLE_API_VERSION"] = "v1"
+
 import sys
 from pathlib import Path
 import warnings
@@ -13,6 +18,17 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import google.generativeai as genai
+
+# Forzar la API v1 estable en las llamadas internas de la SDK
+try:
+    genai.client.API_VERSION = "v1"
+except Exception:
+    pass
+try:
+    genai.client.api_version = "v1"
+except Exception:
+    pass
 
 # Importar las funciones analiticas reales del repositorio del equipo
 from apps.utils import load_model_and_preprocessor, predict_from_inputs
@@ -123,6 +139,13 @@ else:
                 # SOLUCIÓN DEL ERROR: Invocación en el orden requerido por utils.py -> (model, preprocessor, inputs_dict)
                 prediccion, prob_compra = predict_from_inputs(model, preprocessor, inputs_dict)
 
+                # Guardar en session_state para cruzar datos con la pestaña conversacional (RAG)
+                st.session_state['last_prediction'] = {
+                    'prediccion': prediccion,
+                    'prob_compra': prob_compra,
+                    'inputs': inputs_dict
+                }
+
                 # Presentacion de resultados con valor explicativo comercial (Exigido en las pautas)
                 st.subheader("🎯 Diagnóstico del Algoritmo Predictivo")
                 col_res1, col_res2 = st.columns([1, 2])
@@ -183,30 +206,154 @@ else:
                 st.subheader("📊 Gráfico de Importancia Estructural de Características")
                 st.image(str(im_path), caption="Importancia de atributos calculada nativamente por el core de XGBoost.", use_container_width=True)
 
+    # Configurar barra lateral para la API Key de Gemini de forma segura
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🤖 Configuración del Agente IA")
+    
+    # Intentar obtener la API key de los secretos de Streamlit de forma segura
+    try:
+        gemini_api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        gemini_api_key = None
+
+    # Si no está en secretos, habilitar el campo manual en el sidebar
+    if not gemini_api_key:
+        if 'gemini_api_key' in st.session_state:
+            gemini_api_key = st.session_state['gemini_api_key']
+        else:
+            user_key = st.sidebar.text_input("Ingresa tu Gemini API Key:", type="password", help="Obtenela gratis en Google AI Studio")
+            if user_key:
+                gemini_api_key = user_key
+                st.session_state['gemini_api_key'] = user_key
+                st.rerun()
+
+    if gemini_api_key:
+        st.sidebar.success("✔️ API Key de Gemini configurada.")
+    else:
+        st.sidebar.info("💡 Para usar el chat con IA conversacional, ingresa tu API Key.")
+
     with tab_hibrido:
-        st.header("🤖 Proyección: Ecosistema Híbrido de IA Comercial")
-        st.write("Cumplimiento conceptual del Bloque 3 e IA Conversacional (Clase 12, 14 y 16):")
-        
-        col_b1, col_b2 = st.columns(2)
-        
-        with col_b1:
-            st.subheader("📋 Marco de Integración")
+        st.header("🤖 Ecosistema Híbrido Conversacional RAG")
+        st.write("Consulta al Agente Inteligente de E-commerce. Responde en tiempo real basándose en las políticas comerciales y las predicciones.")
+
+        if not gemini_api_key:
+            st.warning("⚠️ Se requiere una API Key de Gemini para activar el chat. Por favor, ingresala en el campo correspondiente de la barra lateral.")
+            
+            # Mostrar la explicación conceptual del bloque 3 si no está la API Key
             st.markdown("""
-            En sintonía con las directivas de la materia, la evolución de esta aplicación local hacia producción contempla la orquestación de un **Agente RAG**.
-            * **Conexión de Datos:** Utilizando un orquestador como *LangChain* o *n8n*, la interfaz capturará los datos técnicos no estructurados (guías de políticas de descuento del e-commerce) alojados en una base de datos vectorial (*FAISS*).
-            * **Llamada a Funciones:** El LLM (*Gemini 1.5 Flash*) utilizará herramientas (*Function Calling*) para consultar en tiempo real las predicciones probabilísticas de nuestro binario XGBoost.
+            ---
+            ### 📋 Concepto: Arquitectura Híbrida de IA
+            En sintonía con las directivas de la materia, esta pestaña implementa una **Arquitectura RAG (Retrieval-Augmented Generation)**:
+            1. **Conexión de Datos:** La interfaz captura los datos no estructurados de la empresa (políticas de descuento y marketing en `data/politicas_comerciales.txt`).
+            2. **Luz sobre el Contexto:** El LLM (*Gemini 1.5 Flash*) absorbe el contexto normativo y los datos probabilísticos del modelo **XGBoost** para dar respuestas comerciales precisas y no alucinadas.
             """)
-        
-        with col_b2:
-            st.subheader("📈 Simulación de Interrogación Corporativa")
-            st.write("Simule una consulta en lenguaje natural realizada por el gerente de Marketing del E-commerce hacia el ecosistema híbrido propuesto:")
-            
-            pregunta = st.text_input("Consulta corporativa simulada:", value="¿Qué clientes en este mes de Noviembre corren riesgo de abandonar el carrito y qué acción de marketing catalizo?")
-            
-            if st.button("⚙️ Simular Respuesta del Agente Híbrido"):
-                st.markdown(f"""
-                **💬 Respuesta Generada por el LLM usando RAG + XGBoost:** > \"Basado en los registros estructurados de navegación y cruzándolo con el modelo predictivo corporativo, detecto que los usuarios recurrentes en **Noviembre** con valores de `PageValues` menores a **12.5** y tasas de salida `ExitRates` superiores al **5%** representan un **72.51% de probabilidad de abandono** (Recall validado).  
-                >  
-                > Consultando las políticas comerciales no estructuradas indexadas en la base vectorial, la acción autorizada es inyectar dinámicamente el **Tool Comercial**: *'Cupón NOV-TRANSACCION'* para mitigar la fuga de conversiones.\"
-                """)
-                st.success("✔️ Pipeline conceptual validado: Respetando distribuciones, métricas comerciales y marcos de IA Conversacional (Clase 12 y 14).")
+        else:
+            import os
+            os.environ["API_VERSION"] = "v1"
+            try:
+                genai.configure(api_key=gemini_api_key)
+            except Exception as e:
+                st.error(f"Error de configuración de la API de Gemini: {e}")
+                st.stop()
+
+            # Intentar cargar base de conocimientos
+            politicas_path = root / 'data' / 'politicas_comerciales.txt'
+            politicas_content = ""
+            if politicas_path.exists():
+                try:
+                    with open(politicas_path, 'r', encoding='utf-8') as f:
+                        politicas_content = f.read()
+                except Exception as e:
+                    st.warning(f"Error al cargar las políticas comerciales: {e}")
+            else:
+                st.warning("Archivo de políticas comerciales `data/politicas_comerciales.txt` no encontrado.")
+
+            # Mostrar estado de los datos del simulador cruzados
+            if 'last_prediction' in st.session_state:
+                lp = st.session_state['last_prediction']
+                pred_label = "COMPRA" if lp['prediccion'] == 1 else "NO COMPRA"
+                st.success(f"📊 **Contexto del Simulador Activo:** Cargados datos de predicción ({pred_label} con {lp['prob_compra'] * 100:.2f}% de probabilidad). El Agente usará esta información en tus preguntas.")
+            else:
+                st.info("💡 **Consejo:** Hacé una corrida de análisis en la pestaña *Simulador de Sesión* para que el agente converse sobre el perfil de ese cliente en particular.")
+
+            # Inicializar historial del chat
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
+
+            # Mostrar historial de chat
+            for msg in st.session_state.messages:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+
+            # Input de chat
+            if prompt := st.chat_input("Preguntale al agente (ej. '¿Qué campaña aplico al cliente de la simulación?')"):
+                with st.chat_message("user"):
+                    st.markdown(prompt)
+                st.session_state.messages.append({"role": "user", "content": prompt})
+
+                # Armar el contexto integrado (RAG + XGBoost)
+                context = f"""
+                Actúas como un asistente analítico e inteligente especializado en E-commerce y Marketing digital.
+                Tu objetivo es asesorar al equipo comercial utilizando la información provista.
+                
+                --- INICIO BASE DE CONOCIMIENTOS DE LA EMPRESA (RAG) ---
+                {politicas_content}
+                --- FIN BASE DE CONOCIMIENTOS ---
+                
+                """
+
+                if 'last_prediction' in st.session_state:
+                    lp = st.session_state['last_prediction']
+                    pred_label = "COMPRA" if lp['prediccion'] == 1 else "NO COMPRA"
+                    context += f"""
+                    --- RESULTADOS DE LA ÚLTIMA SIMULACIÓN (XGBOOST) ---
+                    - Clasificación del Modelo: El cliente tiene intención de {pred_label}.
+                    - Probabilidad de Conversión de Compra: {lp['prob_compra'] * 100:.2f}%
+                    - Parámetros detallados de la navegación del cliente:
+                      * Valor de la Página (PageValues): {lp['inputs']['PageValues']}
+                      * Páginas de Productos visitadas (ProductRelated): {lp['inputs']['ProductRelated']}
+                      * Tiempo en Productos en segundos (ProductRelated_Duration): {lp['inputs']['ProductRelated_Duration']}
+                      * Tasa de Salida (ExitRates): {lp['inputs']['ExitRates']}
+                      * Tasa de Rebote (BounceRates): {lp['inputs']['BounceRates']}
+                      * Mes de la Sesión (Month): {lp['inputs']['Month']}
+                      * Tipo de Visitante (VisitorType): {lp['inputs']['VisitorType']}
+                      * Ocurre en Fin de Semana (Weekend): {lp['inputs']['Weekend']}
+                    ----------------------------------------------------
+                    """
+                else:
+                    context += "\n[Nota: Aún no se ha ejecutado ninguna predicción en el simulador para esta sesión.]\n"
+
+                context += """
+                INSTRUCCIONES DE RESPUESTA:
+                1. Responde con un tono profesional, experto y comercial, muy claro.
+                2. Usa la Base de Conocimientos para justificar tus respuestas. Si la consulta se refiere a qué descuento o campaña aplicar, busca en las políticas y asociala al perfil del cliente.
+                3. Si hay datos de predicción disponibles, utilízalos para dar un diagnóstico personalizado y citá la probabilidad estimada por el modelo.
+                4. Mantén las respuestas fluidas y directas en español.
+                
+                --- HISTORIAL DE LA CONVERSACIÓN ---
+                """
+
+                # Incluir el historial de mensajes anteriores en el contexto
+                for msg in st.session_state.messages[:-1]:
+                    role_label = "Usuario" if msg["role"] == "user" else "Asistente"
+                    context += f"{role_label}: {msg['content']}\n"
+
+                context += f"\nUsuario: {prompt}\nAsistente:"
+
+                try:
+                    with st.spinner("Procesando consulta..."):
+                        # Inicializar el modelo
+                        model_gemini = genai.GenerativeModel(
+                            model_name="gemini-1.5-flash"
+                        )
+                        
+                        # Generar el contenido de forma directa usando la API v1 estándar
+                        response = model_gemini.generate_content(context)
+                        response_text = response.text
+
+                    with st.chat_message("assistant"):
+                        st.markdown(response_text)
+                    st.session_state.messages.append({"role": "assistant", "content": response_text})
+                    
+                except Exception as e:
+                    st.error(f"Error al conectar con Gemini API: {e}")

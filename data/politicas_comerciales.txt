@@ -1,0 +1,36 @@
+========================================================================
+POLÍTICAS COMERCIALES Y ESTRATEGIAS DE MARKETING - E-COMMERCE UPATECO
+========================================================================
+
+Este documento contiene las directrices oficiales de la empresa para la toma de decisiones de marketing basadas en el comportamiento del usuario y predicciones del modelo de IA.
+
+------------------------------------------------------------------------
+1. REGLAS DE SEGMENTACIÓN SEGÚN INTENCIÓN DE COMPRA (PREDICCIÓN)
+------------------------------------------------------------------------
+
+* CATEGORÍA 1: INTENCIÓN BAJA DE CONVERSIÓN (Probabilidad de 0% a 35%)
+  - Diagnóstico: Usuario casual o navegando sin interés transaccional claro.
+  - Acción Comercial: Evitar pop-ups invasivos para no arruinar la experiencia.
+  - Estrategia de Retargeting: Si el usuario visitó más de 8 páginas de productos (ProductRelated > 8) pero su probabilidad es baja, enviar un correo electrónico automatizado de retargeting pasadas las 24 horas ofreciendo un 5% de descuento en la categoría más vista.
+
+* CATEGORÍA 2: INTENCIÓN INTERMEDIA DE CONVERSIÓN (Probabilidad de 35% a 65%)
+  - Diagnóstico: Cliente indeciso. Evalúa alternativas, compara precios o tiene dudas en el carrito de compras.
+  - Acción Comercial: Incentivar la compra en tiempo real (In-App triggers).
+  - Estrategia de Conversión: Inyectar un banner interactivo que ofrezca "Envío Gratis en tu compra de hoy" o activar el cronómetro de "Cupón de Descuento Especial 10% válido por los próximos 15 minutos".
+
+* CATEGORÍA 3: INTENCIÓN ALTA DE CONVERSIÓN / CONVERSIÓN INMINENTE (Probabilidad de 65% a 100%)
+  - Diagnóstico: Cliente convencido y decidido a comprar.
+  - Acción Comercial: Facilitar el cierre de la transacción (Friction Reduction).
+  - Estrategia de Cierre: Ocultar anuncios publicitarios complementarios, reducir al mínimo los campos del formulario de pago (habilitar checkout express en un clic) y garantizar tiempos de entrega rápidos en pantalla.
+
+------------------------------------------------------------------------
+2. CAMPAÑAS ESTACIONALES Y DESCUENTOS ESPECÍFICOS
+------------------------------------------------------------------------
+
+* CAMPAÑA "NOV-TRANSACCION" (Mes de Noviembre):
+  - Justificación: Noviembre es el mes con mayor estacionalidad comercial del año por eventos de descuento masivo (Cyber Monday / Black Friday).
+  - Regla de Activación: Si la sesión ocurre en Noviembre (Month = "Nov") y la probabilidad de compra calculada es de rango intermedio (35% a 65%), el sistema está autorizado a inyectar el código promocional automático "NOV-TRANSACCION" que otorga un 15% de descuento acumulable en el checkout.
+
+* POLÍTICA DE CONTENCIÓN PARA ALTAS TASAS DE SALIDA:
+  - Justificación: Mitigar la deserción de usuarios que abandonan en páginas clave.
+  - Regla de Activación: Si la Tasa de Salida de la página actual supera el 4% (ExitRates > 0.04) pero la Tasa de Rebote es baja (BounceRates < 0.02) y el usuario ha interactuado con páginas de alto interés económico (PageValues > 5), se activa un pop-up de salida (Exit-Intent Popup) con asistencia por chat de soporte para resolver dudas técnicas sobre el pago o el envío.
