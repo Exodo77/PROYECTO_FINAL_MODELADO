@@ -344,7 +344,7 @@ else:
                     import requests
                     with st.spinner("Procesando consulta..."):
                         # Llamada directa HTTP a la API v1 de Gemini para evitar bugs de la SDK vieja
-                        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
+                        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={gemini_api_key}"
                         headers = {
                             "Content-Type": "application/json"
                         }
