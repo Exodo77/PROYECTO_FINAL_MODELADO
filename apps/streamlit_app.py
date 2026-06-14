@@ -341,15 +341,33 @@ else:
                 context += f"\nUsuario: {prompt}\nAsistente:"
 
                 try:
+                    import requests
                     with st.spinner("Procesando consulta..."):
-                        # Inicializar el modelo
-                        model_gemini = genai.GenerativeModel(
-                            model_name="gemini-1.5-flash"
-                        )
+                        # Llamada directa HTTP a la API v1 de Gemini para evitar bugs de la SDK vieja
+                        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
+                        headers = {
+                            "Content-Type": "application/json"
+                        }
+                        payload = {
+                            "contents": [
+                                {
+                                    "parts": [
+                                        {"text": context}
+                                    ]
+                                }
+                            ]
+                        }
                         
-                        # Generar el contenido de forma directa usando la API v1 estándar
-                        response = model_gemini.generate_content(context)
-                        response_text = response.text
+                        response = requests.post(url, headers=headers, json=payload)
+                        if response.status_code == 200:
+                            response_json = response.json()
+                            response_text = response_json['candidates'][0]['content']['parts'][0]['text']
+                        else:
+                            try:
+                                error_msg = response.json()['error']['message']
+                            except Exception:
+                                error_msg = response.text
+                            raise Exception(f"HTTP {response.status_code}: {error_msg}")
 
                     with st.chat_message("assistant"):
                         st.markdown(response_text)
