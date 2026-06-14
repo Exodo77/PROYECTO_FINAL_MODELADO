@@ -154,12 +154,12 @@ La demo esta implementada con Streamlit en `apps/streamlit_app.py`.
 ## 2. Inicializar y activar el entorno virtual reproducible (.venv):
 En sistemas Windows (PowerShell):
   **python -m venv .venv**
-  **.\.venv\Scripts\Activate.ps1**
+  **.venv/Scripts/activate**
 
 ## 3. Instalar dependencias:
 
 Powershell:
-  **python -m pip install -r requirements.txt**
+**python -m pip install -r requirements.txt**
 
 ## 4. Ejecutar la app:
 
