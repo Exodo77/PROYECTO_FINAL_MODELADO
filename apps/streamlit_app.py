@@ -206,31 +206,30 @@ else:
                 st.subheader("📊 Gráfico de Importancia Estructural de Características")
                 st.image(str(im_path), caption="Importancia de atributos calculada nativamente por el core de XGBoost.", use_container_width=True)
 
-    # Configurar barra lateral para la API Key de Gemini de forma segura
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🤖 Configuración del Agente IA")
-    
     # Intentar obtener la API key de los secretos de Streamlit de forma segura
     try:
         gemini_api_key = st.secrets["GEMINI_API_KEY"]
+        has_secrets = True
     except Exception:
         gemini_api_key = None
+        has_secrets = False
 
     # Si no está en secretos, habilitar el campo manual en el sidebar
-    if not gemini_api_key:
+    if not has_secrets:
         if 'gemini_api_key' in st.session_state:
             gemini_api_key = st.session_state['gemini_api_key']
+            st.sidebar.markdown("---")
+            st.sidebar.subheader("🤖 Configuración del Agente IA")
+            st.sidebar.success("✔️ API Key de Gemini configurada de forma temporal.")
         else:
+            st.sidebar.markdown("---")
+            st.sidebar.subheader("🤖 Configuración del Agente IA")
             user_key = st.sidebar.text_input("Ingresa tu Gemini API Key:", type="password", help="Obtenela gratis en Google AI Studio")
             if user_key:
                 gemini_api_key = user_key
                 st.session_state['gemini_api_key'] = user_key
                 st.rerun()
-
-    if gemini_api_key:
-        st.sidebar.success("✔️ API Key de Gemini configurada.")
-    else:
-        st.sidebar.info("💡 Para usar el chat con IA conversacional, ingresa tu API Key.")
+            st.sidebar.info("💡 Para usar el chat con IA conversacional, ingresa tu API Key.")
 
     with tab_hibrido:
         st.header("🤖 Ecosistema Híbrido Conversacional RAG")
