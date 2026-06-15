@@ -34,3 +34,19 @@ Este documento contiene las directrices oficiales de la empresa para la toma de 
 * POLÍTICA DE CONTENCIÓN PARA ALTAS TASAS DE SALIDA:
   - Justificación: Mitigar la deserción de usuarios que abandonan en páginas clave.
   - Regla de Activación: Si la Tasa de Salida de la página actual supera el 4% (ExitRates > 0.04) pero la Tasa de Rebote es baja (BounceRates < 0.02) y el usuario ha interactuado con páginas de alto interés económico (PageValues > 5), se activa un pop-up de salida (Exit-Intent Popup) con asistencia por chat de soporte para resolver dudas técnicas sobre el pago o el envío.
+
+* POLÍTICA PARA FINES DE SEMANA (WEEKEND):
+  - Justificación: El comportamiento de compra cambia el sábado y domingo; los usuarios suelen navegar con más tiempo libre pero concretan menos si perciben demoras en los despachos.
+  - Regla de Activación: Si la sesión ocurre en fin de semana (Weekend = True) y la probabilidad de compra calculada es de rango intermedio (35% a 65%), el sistema está autorizado a inyectar promociones express de tipo "Weekend Sale" u ofrecer "Delivery prioritario gratis el lunes" en el checkout.
+
+------------------------------------------------------------------------
+3. ESTRATEGIAS DE RETENCIÓN EN TIEMPO REAL PARA EVITAR EL ABANDONO (FUGAS)
+------------------------------------------------------------------------
+
+* REGLA DE RESCATE PARA VISITANTES RECURRENTES CON ALTA EXPLORACIÓN:
+  - Justificación: Los clientes que regresan (VisitorType = "Returning_Visitor") conocen la marca. Si miran más de 10 productos (ProductRelated > 10) pero no agregan nada al carrito (PageValues = 0), es probable que busquen un incentivo o estén comparando precios de forma indecisa.
+  - Regla de Activación: Si VisitorType = "Returning_Visitor", ProductRelated > 10 y la probabilidad de compra es baja (Categoría 1, < 35%), romper excepcionalmente la restricción de pop-ups para mostrar un banner sutil con el mensaje: "¡Hola de nuevo! Te extrañamos. Finalizá tu pedido hoy y obtené un 10% OFF usando el código VOLVER10 en el checkout."
+
+* ALERTA DE FUGA CRÍTICA POR TASA DE SALIDA/REBOTE ALTA:
+  - Justificación: Cuando un usuario que estuvo explorando mucho empieza a registrar tasas de salida críticas (ExitRates > 0.30), la probabilidad de abandono definitivo es inminente.
+  - Regla de Activación: Si ExitRates > 0.30 o BounceRates > 0.50, pero el usuario pasó más de 300 segundos en páginas de productos (ProductRelated_Duration > 300), disparar un widget flotante discreto de asistencia directa ("¿Dudas con el envío o formas de pago? Chateá con un asesor ahora por WhatsApp") para intentar destrabar la fricción antes de que abandone el sitio.
